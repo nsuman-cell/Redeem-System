@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>El Locale Rewards — Member Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #F0EDE4;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    padding: 32px 16px;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .phone-frame {
+    width: 390px;
+    background: #FFFDF7;
+    border-radius: 40px;
+    overflow: hidden;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.18), 0 0 0 10px #1a1a1a;
+    min-height: 844px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .notch {
+    background: #1a1a1a;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .notch-pill {
+    width: 100px;
+    height: 10px;
+    background: #333;
+    border-radius: 10px;
+  }
+
+  .scroll-area {
+    flex: 1;
+    overflow-y: auto;
+    padding-bottom: 80px;
+  }
+  .scroll-area::-webkit-scrollbar { display: none; }
+
+  .el-topbar {
+    background: #F5A800;
+    padding: 16px 20px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .el-logo {
+    font-family: 'DM Serif Display', serif;
+    font-style: italic;
+    font-size: 22px;
+    color: #1a1a1a;
+    letter-spacing: -0.5px;
+  }
+  .el-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #1a1a1a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 500;
+    color: #F5A800;
+  }
+  .el-greeting {
+    background: #F5A800;
+    padding: 0 20px 20px;
+  }
+  .el-greeting p { font-size: 13px; color: #5a3d00; }
+  .el-greeting h2 { font-size: 20px; font-weight: 500; color: #1a1a1a; margin-top: 2px; }
+
+  .el-wallet-card {
+    margin: 16px;
+    background: #1a1a1a;
+    border-radius: 16px;
+    padding: 20px;
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+  }
+  .el-wallet-card::before {
+    content: '';
+    position: absolute;
+    right: -20px; top: -20px;
+    width: 140px; height: 140px;
+    border-radius: 50%;
+    background: rgba(245,168,0,0.12);
+  }
+  .el-wallet-card::after {
+    content: '';
+    position: absolute;
+    right: 40px; bottom: -30px;
+    width: 100px; height: 100px;
+    border-radius: 50%;
+    background: rgba(245,168,0,0.07);
+  }
+  .el-wallet-label {
+    font-size: 11px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    margin-bottom: 4px;
+  }
+  .el-wallet-amount {
+    font-size: 48px;
+    font-weight: 500;
+    color: #F5A800;
+    line-height: 1;
+    position: relative;
+    z-index: 1;
+  }
+  .el-wallet-sub { font-size: 13px; color: #666; margin-top: 6px; }
+  .el-wallet-row {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 0.5px solid rgba(255,255,255,0.08);
+  }
+  .el-wallet-stat label { font-size: 11px; color: #555; display: block; margin-bottom: 3px; }
+  .el-wallet-stat span { font-size: 15px; font-weight: 500; color: #fff; }
+
+  .el-redeem-btn {
+    margin: 0 16px 4px;
+    width: calc(100% - 32px);
+    background: #F5A800;
+    color: #1a1a1a;
+    border: none;
+    border-radius: 12px;
+    padding: 15px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: transform 0.1s, opacity 0.1s;
+    display: block;
+  }
+  .el-redeem-btn:hover { opacity: 0.9; }
+  .el-redeem-btn:active { transform: scale(0.98); }
+
+  .el-section { padding: 20px 16px 0; }
+  .el-section-title {
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: #aaa;
+    margin-bottom: 12px;
+  }
+
+  .el-journey-tabs {
+    display: flex;
+    gap: 6px;
+    margin: 0 16px;
+    padding: 4px;
+    background: #EDE9DF;
+    border-radius: 12px;
+  }
+  .el-tab {
+    flex: 1;
+    padding: 9px;
+    border: none;
+    background: transparent;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    color: #999;
+    border-radius: 9px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .el-tab.active {
+    background: #fff;
+    color: #1a1a1a;
+    font-weight: 500;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  }
+  .el-tab:hover:not(.active) { color: #555; }
+
+  .el-panel { display: none; }
+  .el-panel.active { display: block; }
+
+  .el-earn-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #fff;
+    border-radius: 12px;
+    padding: 14px;
+    margin-bottom: 8px;
+    border: 0.5px solid #E8E4D8;
+    transition: transform 0.15s;
+  }
+  .el-earn-item:hover { transform: translateX(2px); }
+  .el-earn-icon {
+    width: 42px; height: 42px;
+    border-radius: 10px;
+    background: #FFF3D0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+  .el-earn-info { flex: 1; }
+  .el-earn-info h4 { font-size: 14px; font-weight: 500; color: #1a1a1a; margin-bottom: 2px; }
+  .el-earn-info p { font-size: 12px; color: #999; }
+  .el-earn-badge {
+    background: #FFF3D0;
+    color: #8a5a00;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 5px 10px;
+    border-radius: 20px;
+    white-space: nowrap;
+  }
+  .el-earn-badge.green { background: #E8F5E9; color: #2e7d32; }
+
+  .el-progress-wrap {
+    background: #fff;
+    border-radius: 12px;
+    padding: 16px;
+    border: 0.5px solid #E8E4D8;
+    margin-bottom: 10px;
+  }
+  .el-progress-header {
+    display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;
+  }
+  .el-progress-header strong { font-size: 14px; font-weight: 500; color: #1a1a1a; }
+  .el-progress-header span { font-size: 13px; color: #999; }
+  .el-progress-bar {
+    height: 8px; background: #F0EDE4; border-radius: 4px; overflow: hidden;
+  }
+  .el-progress-fill {
+    height: 100%; background: #F5A800; border-radius: 4px; width: 72%;
+    transition: width 1s ease;
+  }
+  .el-progress-labels {
+    display: flex; justify-content: space-between; margin-top: 6px;
+  }
+  .el-progress-labels span { font-size: 11px; color: #bbb; }
+  .el-progress-labels .mid { color: #F5A800; font-weight: 500; }
+
+  .el-referral-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 18px;
+    border: 0.5px solid #E8E4D8;
+    margin-bottom: 10px;
+  }
+  .el-referral-card h4 { font-size: 16px; font-weight: 500; margin-bottom: 6px; }
+  .el-referral-card p { font-size: 13px; color: #666; line-height: 1.6; margin-bottom: 16px; }
+  .el-link-box {
+    background: #FFFDF7;
+    border: 1.5px dashed #F5A800;
+    border-radius: 10px;
+    padding: 11px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  .el-link-box span { font-size: 13px; color: #888; }
+  .el-link-box button {
+    background: #F5A800;
+    border: none;
+    border-radius: 8px;
+    padding: 6px 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: #1a1a1a;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  .el-link-box button:hover { opacity: 0.85; }
+  .el-share-row { display: flex; gap: 8px; }
+  .el-share-btn {
+    flex: 1; padding: 10px 6px;
+    border-radius: 10px;
+    border: 0.5px solid #E8E4D8;
+    background: #fff;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    color: #333;
+    cursor: pointer;
+    transition: background 0.15s;
+    text-align: center;
+  }
+  .el-share-btn:hover { background: #F0EDE4; }
+
+  .el-stats-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .el-stat-card {
+    background: #fff;
+    border: 0.5px solid #E8E4D8;
+    border-radius: 12px;
+    padding: 14px;
+  }
+  .el-stat-card label { font-size: 11px; color: #aaa; display: block; margin-bottom: 4px; }
+  .el-stat-card span { font-size: 24px; font-weight: 500; color: #1a1a1a; display: block; }
+  .el-stat-card small { font-size: 11px; color: #F5A800; display: block; margin-top: 2px; }
+
+  .el-member-badge {
+    background: #1a1a1a;
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .el-member-badge h4 { font-size: 14px; font-weight: 500; color: #F5A800; margin-bottom: 2px; }
+  .el-member-badge p { font-size: 12px; color: #666; }
+  .el-badge-pill {
+    background: #F5A800; color: #1a1a1a;
+    font-size: 11px; font-weight: 500;
+    padding: 5px 14px; border-radius: 20px;
+  }
+  .el-benefits-card {
+    background: #fff;
+    border: 0.5px solid #E8E4D8;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 20px;
+  }
+  .el-benefit-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 11px 0;
+    border-bottom: 0.5px solid #F5F2E8;
+  }
+  .el-benefit-item:last-child { border-bottom: none; padding-bottom: 0; }
+  .el-benefit-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #F5A800; flex-shrink: 0;
+  }
+  .el-benefit-item span { font-size: 14px; color: #333; }
+
+  .el-expiry-note {
+    background: #FFF8E1;
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 12px;
+    color: #8a5a00;
+    margin-top: 8px;
+    display: flex;
+    gap: 8px;
+    line-height: 1.5;
+  }
+
+  .el-copied {
+    font-size: 12px; color: #2d8a4e;
+    text-align: center; margin-top: 8px;
+    display: none;
+  }
+
+  .el-bottom-nav {
+    display: flex;
+    border-top: 0.5px solid #E8E4D8;
+    background: #fff;
+    padding: 8px 0 12px;
+    position: fixed;
+    bottom: 0;
+    width: 390px;
+    border-radius: 0 0 30px 30px;
+    z-index: 10;
+  }
+  .el-nav-item {
+    flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px;
+    padding: 6px; border: none; background: transparent; cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  .el-nav-item:hover { opacity: 0.7; }
+  .el-nav-label { font-size: 10px; color: #aaa; font-family: 'DM Sans', sans-serif; }
+  .el-nav-item.active .el-nav-label { color: #F5A800; }
+
+  .el-toast {
+    position: fixed;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1a1a1a;
+    color: #fff;
+    font-size: 13px;
+    padding: 10px 22px;
+    border-radius: 24px;
+    z-index: 999;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+  }
+  .el-toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<div class="phone-frame">
+  <div class="notch"><div class="notch-pill"></div></div>
+
+  <div class="scroll-area">
+    <div class="el-topbar">
+      <div class="el-logo">el locale</div>
+      <div class="el-avatar"g>SM</div>
+    </div>
+    <div class="el-greeting">
+      <p>Good morning,</p>
+      <h2>Sam 👋</h2>
+    </div>
+
+    <div class="el-wallet-card">
+      <p class="el-wallet-label">Your rewards wallet</p>
+      <p class="el-wallet-amount">$12.50</p>
+      <p class="el-wallet-sub">Ready to spend at any local boutique</p>
+      <div class="el-wallet-row">
+        <div class="el-wallet-stat"><label>Earned this month</label><span>$4.50</span></div>
+        <div class="el-wallet-stat"><label>Total earned</label><span>$38.00</span></div>
+        <div class="el-wallet-stat"><label>Friends referred</label><span>3</span></div>
+      </div>
+    </div>
+
+    <button class="el-redeem-btn" onclick="showToast('✓ Rewards applied at checkout!')">
+      Use $12.50 at checkout →
+    </button>
+
+    <div class="el-section">
+      <p class="el-section-title">Your rewards journey</p>
+    </div>
+
+    <div class="el-journey-tabs">
+      <button class="el-tab active" onclick="switchTab('shop', this)">🛍 Shop</button>
+      <button class="el-tab" onclick="switchTab('earn', this)">⭐ Earn</button>
+      <button class="el-tab" onclick="switchTab('share', this)">🔗 Share</button>
+    </div>
+
+    <div class="el-section">
+
+      <div id="panel-shop" class="el-panel active">
+        <div class="el-progress-wrap">
+          <div class="el-progress-header">
+            <strong>Next milestone reward</strong>
+            <span>$18 of $25</span>
+          </div>
+          <div class="el-progress-bar"><div class="el-progress-fill"></div></div>
+          <div class="el-progress-labels">
+            <span>$0</span>
+            <span class="mid">$7 away from $5 bonus</span>
+            <span>$25</span>
+          </div>
+        </div>
+
+        <div class="el-earn-item">
+          <div class="el-earn-icon">🛍</div>
+          <div class="el-earn-info">
+            <h4>Hazel Boutique</h4>
+            <p>Dec 12 · Vintage brooch · Mill Valley</p>
+          </div>
+          <div class="el-earn-badge">+$2.50</div>
+        </div>
+        <div class="el-earn-item">
+          <div class="el-earn-icon">🕯</div>
+          <div class="el-earn-info">
+            <h4>Marin Candle Co.</h4>
+            <p>Dec 4 · Hand-poured soy candle</p>
+          </div>
+          <div class="el-earn-badge">+$1.50</div>
+        </div>
+        <div class="el-earn-item">
+          <div class="el-earn-icon">👗</div>
+          <div class="el-earn-info">
+            <h4>Mill Valley Threads</h4>
+            <p>Nov 28 · Linen embroidered jacket</p>
+          </div>
+          <div class="el-earn-badge">+$3.00</div>
+        </div>
+        <div class="el-earn-item">
+          <div class="el-earn-icon">⭐</div>
+          <div class="el-earn-info">
+            <h4>Review bonus</h4>
+            <p>Reviewed Hazel Boutique</p>
+          </div>
+          <div class="el-earn-badge green">+$0.50</div>
+        </div>
+      </div>
+
+      <div id="panel-earn" class="el-panel">
+        <div class="el-earn-item">
+          <div class="el-earn-icon">🛒</div>
+          <div class="el-earn-info">
+            <h4>Every purchase</h4>
+            <p>5 cents per dollar — shown in $ always</p>
+          </div>
+          <div class="el-earn-badge">5%</div>
+        </div>
+        <div class="el-earn-item">
+          <div class="el-earn-icon">⭐</div>
+          <div class="el-earn-info">
+            <h4>Write a review</h4>
+            <p>Once per store, every 90 days</p>
+          </div>
+          <div class="el-earn-badge">+$0.50</div>
+        </div>
+        <div class="el-earn-item">
+          <div class="el-earn-icon">📍</div>
+          <div class="el-earn-info">
+            <h4>Local check-in</h4>
+            <p>Visit a boutique in person</p>
+          </div>
+          <div class="el-earn-badge">+$0.25</div>
+        </div>
+        <div class="el-earn-item">
+          <div class="el-earn-icon">👥</div>
+          <div class="el-earn-info">
+            <h4>Refer a friend</h4>
+            <p>When they complete their first purchase</p>
+          </div>
+          <div class="el-earn-badge">+$5.00</div>
+        </div>
+        <div class="el-earn-item">
+          <div class="el-earn-icon">🆕</div>
+          <div class="el-earn-info">
+            <h4>Welcome bonus</h4>
+            <p>One-time on first purchase</p>
+          </div>
+          <div class="el-earn-badge">+$5.00</div>
+        </div>
+        <div class="el-expiry-note">
+          <span>⏰</span>
+          <span>Rewards are valid for 12 months from the date earned. Points earned before Jan 2026 expire Jan 2027.</span>
+        </div>
+      </div>
+
+      <div id="panel-share" class="el-panel">
+        <div class="el-referral-card">
+          <h4>Give $5, Get $5</h4>
+          <p>Share your link — your friend gets $5 off their first order of $30+. You get $5 when they complete it.</p>
+          <div class="el-link-box">
+            <span>ellocale.com/ref/sam-m</span>
+            <button onclick="copyLink()">Copy link</button>
+          </div>
+          <div id="copied-msg" class="el-copied">✓ Link copied to clipboard!</div>
+          <div class="el-share-row">
+            <button class="el-share-btn" onclick="showToast('Opening Instagram DM...')">📸 Instagram</button>
+            <button class="el-share-btn" onclick="showToast('Opening WhatsApp...')">💬 WhatsApp</button>
+            <button class="el-share-btn" onclick="showToast('Opening Messages...')">✉️ Messages</button>
+          </div>
+        </div>
+
+        <div class="el-stats-row">
+          <div class="el-stat-card">
+            <label>Friends referred</label>
+            <span>3</span>
+            <small>$15 earned total</small>
+          </div>
+          <div class="el-stat-card">
+            <label>Pending reward</label>
+            <span>$5</span>
+            <small>1 friend still shopping</small>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="el-section">
+      <p class="el-section-title">Membership</p>
+      <div class="el-member-badge">
+        <div>
+          <h4>Local Member</h4>
+          <p>Free trial · 18 days remaining</p>
+        </div>
+        <div class="el-badge-pill">Active ✓</div>
+      </div>
+      <div class="el-benefits-card">
+        <div class="el-benefit-item"><div class="el-benefit-dot"></div><span>🚚 Free delivery on every order</span></div>
+        <div class="el-benefit-item"><div class="el-benefit-dot"></div><span>✉️ Member-only email deals</span></div>
+        <div class="el-benefit-item"><div class="el-benefit-dot"></div><span>⏰ Early access to new boutique drops</span></div>
+        <div class="el-benefit-item"><div class="el-benefit-dot"></div><span>⭐ 5% rewards on every purchase</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="el-bottom-nav">
+    <button class="el-nav-item active" id="nav-home" onclick="setNav('home')">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F5A800" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span class="el-nav-label" style="color:#F5A800">Home</span>
+    </button>
+    <button class="el-nav-item" id="nav-discover" onclick="setNav('discover'); showToast('Explore local shops near you')">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <span class="el-nav-label">Discover</span>
+    </button>
+    <button class="el-nav-item" id="nav-orders" onclick="setNav('orders'); showToast('Your order history')">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+      <span class="el-nav-label">Orders</span>
+    </button>
+    <button class="el-nav-item" id="nav-profile" onclick="setNav('profile'); showToast('Account & settings')">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span class="el-nav-label">Profile</span>
+    </button>
+  </div>
+</div>
+
+<div class="el-toast" id="toast"></div>
+
+<script>
+  function switchTab(tab, el) {
+    document.querySelectorAll('.el-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.el-panel').forEach(p => p.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('panel-' + tab).classList.add('active');
+  }
+
+  function copyLink() {
+    navigator.clipboard.writeText('https://ellocale.com/ref/sam-m').catch(() => {});
+    const msg = document.getElementById('copied-msg');
+    msg.style.display = 'block';
+    setTimeout(() => { msg.style.display = 'none'; }, 2500);
+  }
+
+  let toastTimer;
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => { t.classList.remove('show'); }, 2200);
+  }
+
+  function setNav(id) {
+    document.querySelectorAll('.el-nav-item').forEach(n => {
+      n.classList.remove('active');
+      n.querySelector('.el-nav-label').style.color = '#aaa';
+      n.querySelector('svg').setAttribute('stroke', '#aaa');
+    });
+    const active = document.getElementById('nav-' + id);
+    active.classList.add('active');
+    active.querySelector('.el-nav-label').style.color = '#F5A800';
+    active.querySelector('svg').setAttribute('stroke', '#F5A800');
+  }
+</script>
+</body>
+</html>
